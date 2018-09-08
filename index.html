@@ -1,0 +1,621 @@
+
+<style    >
+
+    body    { margin : 0 }
+
+    canvas    { width : 100% }
+
+</style>
+
+
+<body    onload = 'initialize (  )'    >
+
+    <canvas    >
+
+    </canvas>
+
+</body>
+
+
+<script    src = 'js/Three.js'    >
+
+</script>
+
+<script    src = 'js/CopyShader.js'    >
+
+</script>
+
+<script    src = 'js/EffectComposer.js'    >
+
+</script>
+
+<script    src = 'js/ShaderPass.js'    >
+
+</script>
+
+<script    src = 'js/RenderPass.js'    >
+
+</script>
+
+<script    src = 'js/Tween.js'    >
+
+</script>
+
+<script    src = 'js/Blip.js'    >
+
+</script>
+
+<!--<script    src = 'js/FlyControls.js'    >    &lt;!&ndash;    debug    &ndash;&gt;-->
+
+<!--</script>-->
+
+<!--<script    src = 'js/Stats.js'    >    &lt;!&ndash;    debug    &ndash;&gt;-->
+
+<!--</script>-->
+
+<script    >
+
+
+    let canvas , renderer , camera , scene ;
+
+    function initialize (  ) {
+
+
+        canvas = document . getElementsByTagName ( 'canvas' ) [ 0 ] ;
+
+        renderer = new THREE . WebGLRenderer ( { canvas : canvas } ) ;
+
+        renderer . setSize ( window . innerWidth , window . innerHeight ) ;
+
+        renderer . setClearColor ( 0xEFEBE9 , 1 ) ;    //    brown 50
+
+
+        camera = new THREE . PerspectiveCamera ( 45 , window . innerWidth / window . innerHeight , 1 , 100000 ) ;
+
+        camera . position . set ( 0 , 75000 , 0 ) ;
+
+
+        scene = new THREE . Scene (  ) ;
+
+
+        objects (  ) ;
+
+        postprocessing (  ) ;
+
+        // helpers (  ) ;    //    debug
+
+        input (  ) ;
+
+        animate (  ) ;
+
+
+    }
+
+
+
+    function write ( text , mesh , color , x , y , z ) {
+
+
+        const loader = new THREE . FontLoader (  ) ;
+
+        loader . load ( 'json/Press Start 2P.json' , font => {
+
+
+            const geometry = new THREE . TextGeometry ( text , { font : font } ) ;
+
+
+            mesh = new THREE . Mesh ( geometry ,
+                new THREE . MeshBasicMaterial ( { color : color } ) ) ;
+
+            mesh . position . set ( x , y , z ) ;
+
+            mesh . rotation . set ( 270 * Math . PI / 180 , 0 , 0 ) ;
+
+
+            scene . add ( mesh ) ;
+
+
+        } ) ;
+
+
+    }
+
+
+
+    let meshInstructions , meshTitle , meshAuthor , mesh0 , mesh1 , mesh2 , mesh3 , mesh4 , mesh5 , mesh6 , mesh7 ,
+        mesh8 , mesh9 ;
+
+    function objects (  ) {
+
+
+        write ( 'swipe or use arrow keys' , meshInstructions , 0x212121 ,
+            - 1600 , camera . position . y - 6750 , - 2250 ) ;    //    grey 900
+
+        write ( 'sartre' , meshTitle , 0xfafafa , - 410 , camera . position . y - 5000 , - 1100 ) ;    //    grey 50
+
+        write ( 'by waraw' , meshAuthor , 0xfafafa , - 545 , camera . position . y - 5000 , 1235 ) ;    //    grey 50
+
+
+        let map = `
+
+00000000000000000000
+09999999999999999990
+09111111111111111190
+09188888888888888190
+09182222222222228190
+09182777777777728190
+09182733333333728190
+09182736666663728190
+09182736444463728190
+09182736455463728190
+09182736455463728190
+09182736444463728190
+09182736666663728190
+09182733333333728190
+09182777777777728190
+09182222222222228190
+09188888888888888190
+09111111111111111190
+09999999999999999990
+00000000000000000000
+
+        ` ;
+
+        map = map . split ( '\n' ) ;
+
+        map . splice ( 0 , 2 ) ;
+
+        map . splice ( map . length - 2 , 2 ) ;
+
+
+        const width = map [ 0 ] . length / 2 ;
+
+        const height = map . length / 2 ;
+
+
+        let position ;
+
+
+        let mesh ;
+
+
+        const geometry = new THREE . BoxGeometry ( 1000 , 1000 , 1000 ) ;
+
+        const geometry0 = new THREE . Geometry (  ) ;
+
+        const geometry1 = new THREE . Geometry (  ) ;
+
+        const geometry2 = new THREE . Geometry (  ) ;
+
+        const geometry3 = new THREE . Geometry (  ) ;
+
+        const geometry4 = new THREE . Geometry (  ) ;
+
+        const geometry5 = new THREE . Geometry (  ) ;
+
+        const geometry6 = new THREE . Geometry (  ) ;
+
+        const geometry7 = new THREE . Geometry (  ) ;
+
+        const geometry8 = new THREE . Geometry (  ) ;
+
+        const geometry9 = new THREE . Geometry (  ) ;
+
+
+        for ( let row = map . length ; row -- ; ) {
+
+            for ( let column = map [ row ] . length ; column -- ; ) {
+
+                position = parseInt ( map [ row ] . charAt ( column ) ) ;
+
+
+                mesh = new THREE . Mesh ( geometry ) ;
+
+                mesh . position . set ( ( column - width ) * 1000 + 500 , position * 1000 ,
+                    ( row - height ) * 1000 + 500 ) ;
+
+                mesh . updateMatrix (  ) ;
+
+
+                switch ( position ) {
+
+                    case 0 :    geometry0 . merge ( mesh . geometry , mesh . matrix ) ;    break ;
+
+                    case 1 :    geometry1 . merge ( mesh . geometry , mesh . matrix ) ;    break ;
+
+                    case 2 :    geometry2 . merge ( mesh . geometry , mesh . matrix ) ;    break ;
+
+                    case 3 :    geometry3 . merge ( mesh . geometry , mesh . matrix ) ;    break ;
+
+                    case 4 :    geometry4 . merge ( mesh . geometry , mesh . matrix ) ;    break ;
+
+                    case 5 :    geometry5 . merge ( mesh . geometry , mesh . matrix ) ;    break ;
+
+                    case 6 :    geometry6 . merge ( mesh . geometry , mesh . matrix ) ;    break ;
+
+                    case 7 :    geometry7 . merge ( mesh . geometry , mesh . matrix ) ;    break ;
+
+                    case 8 :    geometry8 . merge ( mesh . geometry , mesh . matrix ) ;    break ;
+
+                    case 9 :    geometry9 . merge ( mesh . geometry , mesh . matrix ) ;    break ;
+
+                }
+
+            }
+
+        }
+
+
+        const materialEven = new THREE . MeshBasicMaterial ( { color : 0x212121 } ) ;    //    grey 900
+
+        const materialOdd = new THREE . MeshBasicMaterial ( { color : 0xfafafa } ) ;    //    grey 50
+
+
+        mesh0 = new THREE . Mesh ( geometry0 , materialEven ) ;
+
+        mesh1 = new THREE . Mesh ( geometry1 , materialOdd ) ;
+
+        mesh2 = new THREE . Mesh ( geometry2 , materialEven ) ;
+
+        mesh3 = new THREE . Mesh ( geometry3 , materialOdd ) ;
+
+        mesh4 = new THREE . Mesh ( geometry4 , materialEven ) ;
+
+        mesh5 = new THREE . Mesh ( geometry5 , materialOdd ) ;
+
+        mesh6 = new THREE . Mesh ( geometry6 , materialEven ) ;
+
+        mesh7 = new THREE . Mesh ( geometry7 , materialOdd ) ;
+
+        mesh8 = new THREE . Mesh ( geometry8 , materialEven ) ;
+
+        mesh9 = new THREE . Mesh ( geometry9 , materialOdd ) ;
+
+
+        scene . add ( mesh0 ) ;
+
+        scene . add ( mesh1 ) ;
+
+        scene . add ( mesh2 ) ;
+
+        scene . add ( mesh3 ) ;
+
+        scene . add ( mesh4 ) ;
+
+        scene . add ( mesh5 ) ;
+
+        scene . add ( mesh6 ) ;
+
+        scene . add ( mesh7 ) ;
+
+        scene . add ( mesh8 ) ;
+
+        scene . add ( mesh9 ) ;
+
+
+    }
+
+
+
+    let composer , pass ;
+
+    function postprocessing (  ) {
+
+
+        const uniforms = {
+
+            tDiffuse : { value : null } ,
+
+            uPixelSize : { value : 2.5 } ,
+
+            uResolution : { value : new THREE . Vector2 ( window . innerWidth , window . innerHeight ) } ,
+
+            uTime : { value : 0. }
+
+        } ;
+
+        const vertexShader = `
+
+            varying vec2 vUv ;
+
+            void main (  ) {
+
+                vUv = uv ;
+
+                gl_Position = projectionMatrix * modelViewMatrix * vec4 ( position , 1. ) ;
+
+            }
+
+        ` ;
+
+        const fragmentShader = `
+
+            #include <common>
+
+            uniform sampler2D tDiffuse ;
+
+            uniform float uPixelSize ;
+
+            uniform vec2 uResolution ;
+
+            uniform float uTime ;
+
+            varying vec2 vUv ;
+
+            void main (  ) {
+
+                vec4 pixelated = texture2D ( tDiffuse ,
+                    ( uPixelSize / uResolution ) * floor ( vUv / ( uPixelSize / uResolution ) ) ) ;
+
+                vec4 noisy = pixelated * .75 + pixelated * rand ( vUv + uTime / 100000. ) * .25 ;
+
+                vec4 colored = vec4 ( noisy . r , ( noisy . g + noisy . b ) * .5 ,
+                    ( noisy . g + noisy . b ) * .5 , 1. ) * 1.125 ;
+
+                gl_FragColor = colored ;
+
+            }
+
+                //    uses 'PixelShader.js' by 'wongbryan' , 'FilmShader.js' by 'alteredq' ,
+                //        'TechnicolorShader.js' by 'flimshaw'
+
+        ` ;
+
+
+        pass = new THREE . ShaderPass ( { uniforms : uniforms , vertexShader : vertexShader ,
+            fragmentShader : fragmentShader } ) ;
+
+        pass . renderToScreen = true ;
+
+
+        composer = new THREE . EffectComposer ( renderer ) ;
+
+        composer . addPass ( new THREE . RenderPass ( scene , camera ) ) ;
+
+        composer . addPass ( pass ) ;
+
+
+    }
+
+
+
+    // let controls , clock , stats ;    //    debug
+
+    // function helpers (  ) {    //    debug
+    //
+    //
+    //     controls = new THREE . FlyControls ( camera ) ;
+    //
+    //     clock = new THREE . Clock (  ) ;
+    //
+    //
+    //     stats = new Stats (  ) ;
+    //
+    //     document . body . appendChild ( stats . dom ) ;
+    //
+    //
+    // }
+
+
+
+    function move ( direction ) {
+
+
+        switch ( direction ) {
+
+            case 'n' :
+
+                new TWEEN . Tween ( mesh0 . position ) . to ( { z : - 10000 } , 1125 ) . start (  ) ;
+
+                new TWEEN . Tween ( mesh2 . position ) . to ( { z : - 10000 } , 1250 )
+                    . chain ( new TWEEN . Tween ( camera . position ) . to ( { y : 22500 } , 1000 )
+                    . chain ( new TWEEN . Tween ( camera . position ) . to ( { z : 45000 } , 1000 ) ) ) . start (  ) ;
+
+                break ;
+
+            case 's' :
+
+                new TWEEN . Tween ( mesh0 . position ) . to ( { z : 10000 } , 1125 ) . start (  ) ;
+
+                new TWEEN . Tween ( mesh2 . position ) . to ( { z : 10000 } , 1250 )
+                    . chain ( new TWEEN . Tween ( camera . position ) . to ( { y : - 22500 } , 1000 )
+                    . chain ( new TWEEN . Tween ( camera . position ) . to ( { z : 45000 } , 1000 ) ) ) . start (  ) ;
+
+                break ;
+
+            case 'e' :
+
+                new TWEEN . Tween ( mesh0 . position ) . to ( { x : 10000 } , 1125 ) . start (  ) ;
+
+                new TWEEN . Tween ( mesh2 . position ) . to ( { x : 10000 } , 1250 )
+                    . chain ( new TWEEN . Tween ( camera . position ) . to ( { z : 22500 } , 500 )
+                    . chain ( new TWEEN . Tween ( camera . position ) . to ( { x : 45000 } , 1500 ) ) ) . start (  ) ;
+
+                break ;
+
+            case 'w' :
+
+                new TWEEN . Tween ( mesh0 . position ) . to ( { x : - 10000 } , 1125 ) . start (  ) ;
+
+                new TWEEN . Tween ( mesh2 . position ) . to ( { x : - 10000 } , 1250 )
+                    . chain ( new TWEEN . Tween ( camera . position ) . to ( { z : 22500 } , 500 )
+                    . chain ( new TWEEN . Tween ( camera . position ) . to ( { x : - 45000 } , 1500 ) ) ) . start (  ) ;
+
+                break ;
+
+        }
+
+
+    }
+
+
+
+    function audio (  ) {
+
+
+        blip . sampleLoader (  )
+            . samples ( { D3 : 'wav/D3.wav' , F3 : 'wav/F3.wav' , A3 : 'wav/A3.wav' , C4 : 'wav/C4.wav' } )
+            . done ( (  ) => {
+
+
+                blip . loop (  ) . tempo ( 60.1 ) . tick ( t =>    blip . clip (  ) . sample ( 'D3' ) . play ( t )    )
+                    . start (  ) ;
+
+                blip . loop (  ) . tempo ( 50.2 ) . tick ( t =>    blip . clip (  ) . sample ( 'F3' ) . play ( t )    )
+                    . start (  ) ;
+
+                blip . loop (  ) . tempo ( 40.3 ) . tick ( t =>    blip . clip (  ) . sample ( 'A3' ) . play ( t )    )
+                    . start (  ) ;
+
+                blip . loop (  ) . tempo ( 30.4 ) . tick ( t =>    blip . clip (  ) . sample ( 'C4' ) . play ( t )    )
+                    . start (  ) ;
+
+
+            } ) . load (  ) ;
+
+
+    }
+
+
+
+    let play = 0 ;
+
+    function input (  ) {
+
+
+        window . addEventListener ( 'resize' , (  ) => {
+
+
+            camera . aspect = window . innerWidth / window . innerHeight ;
+
+            camera . updateProjectionMatrix (  ) ;
+
+
+            renderer . setSize ( window . innerWidth , window . innerHeight ) ;
+
+
+            composer . reset (  ) ;
+
+
+        } ) ;
+
+
+        let startX , startY , endX , endY ;
+
+        canvas . addEventListener ( 'touchstart' , e => {
+
+
+            startX = e . changedTouches [ 0 ] . clientX ;
+
+            startY = e . changedTouches [ 0 ] . clientY ;
+
+
+            new TWEEN . Tween ( pass . uniforms . uPixelSize ) . to ( { value : 22.5 } , 2250 )
+                . chain ( new TWEEN . Tween ( pass . uniforms . uPixelSize ) . to ( { value : 2.5 } , 1125 ) )
+                . start (  ) ;
+
+
+            if ( ! play ++ )    audio (  ) ;
+
+
+        } ) ;
+
+        canvas . addEventListener ( 'touchend' , e => {
+
+
+            endX = e . changedTouches [ 0 ] . clientX ;
+
+            endY = e . changedTouches [ 0 ] . clientY ;
+
+            if ( Math.abs ( startX - endX ) > window . innerWidth / 5 ) {
+
+                if ( startX > endX )    move ( 'e' ) ;
+
+                else    move ( 'w' ) ;
+
+            }
+
+            if ( Math.abs ( startY - endY ) > window . innerHeight / 5 ) {
+
+                if ( startY > endY )    move ( 'n' ) ;
+
+                else    move ( 's' ) ;
+
+            }
+
+
+        } ) ;
+
+        canvas . addEventListener ( 'touchmove' , e => e . preventDefault (  ) ) ;
+
+
+        window . addEventListener ( 'keydown' , e => {
+
+
+            switch ( e . code ) {
+
+                case 'ArrowUp' :    case 'KeyW' :    move ( 'n' ) ;    break ;
+
+                case 'ArrowDown' :    case 'KeyS' :    move ( 's' ) ;    break ;
+
+                case 'ArrowRight' :    case 'KeyD' :    move ( 'e' ) ;    break;
+
+                case 'ArrowLeft' :    case 'KeyA' :    move ( 'w' ) ;    break ;
+
+            }
+
+
+            new TWEEN . Tween ( pass . uniforms . uPixelSize ) . to ( { value : 22.5 } , 2250 )
+                . chain ( new TWEEN . Tween ( pass . uniforms . uPixelSize ) . to ( { value : 2.5 } , 1125 ) )
+                . start (  ) ;
+
+
+            if ( ! play ++ )    audio (  ) ;
+
+
+        } ) ;
+
+
+    }
+
+
+
+    function animate (  ) {
+
+
+        camera . lookAt ( 0 , 0 , 0 ) ;
+
+
+        mesh0 . rotation . y = mesh2 . rotation . y = mesh4 . rotation . y = mesh6 . rotation . y =
+            mesh8 . rotation . y = Date . now (  ) / 1250 ;
+
+        mesh1 . rotation . y = mesh3 . rotation . y = mesh5 . rotation . y = mesh7 . rotation . y =
+            mesh9 . rotation . y = - Date . now (  ) / 1500 ;
+
+
+        pass . uniforms . uTime . value += 1 / 60 ;
+
+
+        TWEEN . update (  ) ;
+
+
+        // controls . update ( clock . getDelta (  ) * 100 ) ;    //    debug
+
+
+        // stats . update (  ) ;    //    debug
+
+
+        composer . render (  ) ;
+
+
+        requestAnimationFrame ( animate ) ;
+
+
+    }
+
+
+</script>
+
+
+
+<!--    'Sartre' by George Waraw @ 09.2018    -->
