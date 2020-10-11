@@ -1,1 +1,1 @@
-Change the scene with the WASD or the arrow keys.
+Change the scene with WASD or the arrow keys.
